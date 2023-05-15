@@ -9,9 +9,14 @@
 </template>
 
 <script setup lang="ts">
-const params = {
-  storeIds: ['115760214753254'],
-  currentStatuses: ['vod', 'live', 'planned'],
+import type { SearchQuery, EventStatus } from '~/types';
+
+const route = useRoute();
+
+const params: SearchQuery = {
+  storeIds: [route.params.storeId as string],
+  tags: [],
+  currentStatuses: route.query.statuses as EventStatus[],
   page: 1,
   size: 10,
   skipAggregations: true,
@@ -19,9 +24,9 @@ const params = {
   platform: 'on_site',
   sort: {
     field: 'naturalSorting',
-    direction: 'asc',
+    direction: route.query.sort as 'asc' | 'desc',
   },
-  showExpired: true,
+  showExpired: !route.query.hideExpired,
 };
 
 const { data } = useFetch('https://europe-west1-elisashop-a7b5f.cloudfunctions.net/shopApi/search/liveEvents', {
